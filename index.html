@@ -1318,7 +1318,7 @@ function VoterGate({ setView }) {
 // VOTING BOOTH
 // ══════════════════════════════════════════════════════════════════
 function VotingBooth({ voter, setView, setVoter }) {
-    const { config, posts, candidates, voters, reload } = useElectionData();
+    const { config, posts, candidates, voters, reload, loading } = useElectionData();
     const [selections, setSelections] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [err, setErr] = useState("");
@@ -1326,6 +1326,24 @@ function VotingBooth({ voter, setView, setVoter }) {
     const [preview, setPreview] = useState(null);
     const liveVoter = voters.find(v => v.matric_no === voter.matric_no);
     const alreadyVoted = (liveVoter && liveVoter.voted) || submitted;
+  if (loading) {
+    return React.createElement(Centered, null,
+        React.createElement("div", {
+            style: {
+                textAlign: "center",
+                color: "#f0fff0",
+                padding: "2rem"
+            }
+        },
+            React.createElement(Spinner, null),
+            React.createElement("p", {
+                style: {
+                    marginTop: 16
+                }
+            }, "Checking election status...")
+        )
+    );
+  }
     if (alreadyVoted) {
         return React.createElement(Centered, null,
             React.createElement("div", { className: "fi", style: { textAlign: "center", maxWidth: 460, padding: "2rem" } },
