@@ -1139,6 +1139,8 @@ function AdminDashboard({ setView }) {
                     const t = tally[post.id] || {};
                     const total = Object.values(t).reduce((a, b) => a + b, 0);
                     const sorted = [...postCands].sort((a, b) => (t[b.id] || 0) - (t[a.id] || 0));
+                  const highestVotes = sorted.length ? (t[sorted[0].id] || 0) : 0;
+const isTie = sorted.filter(c => (t[c.id] || 0) === highestVotes && highestVotes > 0).length > 1;
                     return (React.createElement("div", { key: post.id, style: CARD },
                         React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 } },
                             React.createElement("div", { style: { fontWeight: 700, fontSize: 17, color: "#f0fff0" } }, post.title),
@@ -1150,9 +1152,28 @@ function AdminDashboard({ setView }) {
                         React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(150px,1fr))", gap: 16 } }, sorted.map((c, i) => {
                             const count = t[c.id] || 0;
                             const p = total ? Math.round(count / total * 100) : 0;
-                            const lead = i === 0 && count > 0;
+                            const lead = count === highestVotes && highestVotes > 0;
                             return (React.createElement("div", { key: c.id, style: { display: "flex", flexDirection: "column", alignItems: "center", background: lead ? "rgba(22,101,52,0.2)" : "rgba(255,255,255,0.02)", border: `2px solid ${lead ? "#22c55e" : "rgba(255,255,255,0.06)"}`, borderRadius: 14, padding: "16px 10px 14px", textAlign: "center", position: "relative", boxShadow: lead ? "0 0 24px rgba(34,197,94,0.2)" : "none" } },
-                                lead && React.createElement("div", { style: { position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: "#22c55e", color: "#052e16", fontSize: 10, fontWeight: 800, padding: "2px 10px", borderRadius: 100, letterSpacing: 1, whiteSpace: "nowrap" } }, "\uD83C\uDFC6 LEADING"),
+                                lead && React.createElement(
+    "div",
+    {
+        style: {
+            position: "absolute",
+            top: -12,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "#22c55e",
+            color: "#052e16",
+            fontSize: 10,
+            fontWeight: 800,
+            padding: "2px 10px",
+            borderRadius: 100,
+            letterSpacing: 1,
+            whiteSpace: "nowrap"
+        }
+    },
+    isTie ? "🤝 TIED" : "🏆 LEADING"
+)
                                 c.photo ? React.createElement("img", { src: c.photo, alt: c.name, style: { width: 90, height: 110, objectFit: "cover", objectPosition: "top", borderRadius: 10, border: `3px solid ${lead ? "#22c55e" : "rgba(255,255,255,0.08)"}`, marginBottom: 10, boxShadow: "0 4px 12px rgba(0,0,0,0.5)" } }) : React.createElement("div", { style: { width: 90, height: 110, borderRadius: 10, background: "#1a2e1a", display: "flex", alignItems: "center", justifyContent: "center", border: `3px solid ${lead ? "#22c55e" : "rgba(255,255,255,0.08)"}`, marginBottom: 10, fontSize: 36 } }, "\uD83D\uDC64"),
                                 React.createElement("div", { style: { fontSize: 12, color: lead ? "#f0fff0" : "#d1fae5", fontWeight: 700, marginBottom: 4, lineHeight: 1.3, textTransform: "uppercase" } }, c.name),
                                 React.createElement("div", { style: { fontSize: 22, fontWeight: 800, color: lead ? "#4ade80" : "#86efac", marginBottom: 6 } }, count),
