@@ -1173,7 +1173,7 @@ const isTie = sorted.filter(c => (t[c.id] || 0) === highestVotes && highestVotes
         }
     },
     isTie ? "🤝 TIED" : "🏆 LEADING"
-)
+),
                                 c.photo ? React.createElement("img", { src: c.photo, alt: c.name, style: { width: 90, height: 110, objectFit: "cover", objectPosition: "top", borderRadius: 10, border: `3px solid ${lead ? "#22c55e" : "rgba(255,255,255,0.08)"}`, marginBottom: 10, boxShadow: "0 4px 12px rgba(0,0,0,0.5)" } }) : React.createElement("div", { style: { width: 90, height: 110, borderRadius: 10, background: "#1a2e1a", display: "flex", alignItems: "center", justifyContent: "center", border: `3px solid ${lead ? "#22c55e" : "rgba(255,255,255,0.08)"}`, marginBottom: 10, fontSize: 36 } }, "\uD83D\uDC64"),
                                 React.createElement("div", { style: { fontSize: 12, color: lead ? "#f0fff0" : "#d1fae5", fontWeight: 700, marginBottom: 4, lineHeight: 1.3, textTransform: "uppercase" } }, c.name),
                                 React.createElement("div", { style: { fontSize: 22, fontWeight: 800, color: lead ? "#4ade80" : "#86efac", marginBottom: 6 } }, count),
