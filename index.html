@@ -1247,6 +1247,8 @@ function PostVoteDetail({ post, candidates, voters, tally }) {
             votersByCand[cid].push(v);
     } });
     const sorted = [...candidates].sort((a, b) => (t[b.id] || 0) - (t[a.id] || 0));
+  const highestVotes = sorted.length ? (t[sorted[0].id] || 0) : 0;
+const isTie = sorted.filter(c => (t[c.id] || 0) === highestVotes && highestVotes > 0).length > 1;
     return (React.createElement("div", { style: { background: "#060f06", border: "1px solid #1e3a1e", borderRadius: 10, padding: "1rem 1.2rem", marginBottom: 16 } },
         React.createElement("div", { style: { fontSize: 11, color: "#166534", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 } },
             "Vote Breakdown \u00B7 ",
@@ -1255,7 +1257,7 @@ function PostVoteDetail({ post, candidates, voters, tally }) {
         React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 14 } }, sorted.map((c, i) => {
             const count = t[c.id] || 0;
             const p = total ? Math.round(count / total * 100) : 0;
-            const lead = i === 0 && count > 0;
+            const lead = count === highestVotes && highestVotes > 0;
             const vlist = votersByCand[c.id] || [];
             return (React.createElement("div", { key: c.id, style: { background: lead ? "rgba(22,101,52,0.06)" : "rgba(255,255,255,0.01)", border: `1px solid ${lead ? "rgba(34,197,94,0.2)" : "#1e3a1e"}`, borderRadius: 10, padding: "12px 14px" } },
                 React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 8 } },
