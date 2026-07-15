@@ -221,9 +221,19 @@ function useElectionData() {
     useEffect(() => {
         load();
         const unsubs = ["posts", "candidates", "voters", "election_config"].map(t => db.subscribe(t, load));
-        const oldUnsubs = ["posts", "candidates", "voters"].map(t => dbOld.subscribe(t, load).catch(() => {}));
+        const oldUnsubs = ["posts", "candidates", "voters"].map(t => {
+    try {
+        return dbOld.subscribe(t, load);
+    } catch (e) {
+        return () => {};
+    }
+});
         const iv = setInterval(load, 8000);
-        return () => { unsubs.forEach(u => u()); clearInterval(iv); };
+        return () => {
+    unsubs.forEach(u => u && u());
+    oldUnsubs.forEach(u => u && u());
+    clearInterval(iv);
+};
     }, [load]);
     return Object.assign(Object.assign({}, data), { reload: load });
 }
