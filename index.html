@@ -580,16 +580,45 @@ function RevealPostCard({ post, tally, isLatest }) {
     const t = tally[post.id] || {};
     const total = Object.values(t).reduce((a, b) => a + b, 0);
     const sorted = [...postCands].sort((a, b) => (t[b.id] || 0) - (t[a.id] || 0));
-    const winner = sorted[0];
-    const winCount = winner ? t[winner.id] || 0 : 0;
-    const winPct = total ? Math.round(winCount / total * 100) : 0;
+    const highestVotes = sorted.length ? (t[sorted[0].id] || 0) : 0;
+const tiedCandidates = sorted.filter(c => (t[c.id] || 0) === highestVotes && highestVotes > 0);
+const isTie = tiedCandidates.length > 1;
+
+const winner = isTie ? null : sorted[0];
+const winCount = highestVotes;
+const winPct = total ? Math.round(winCount / total * 100) : 0;
     return (React.createElement("div", { style: Object.assign(Object.assign({}, CARD), { animation: isLatest ? "winnerPop 0.7s ease both" : "none", border: isLatest ? "2px solid #22c55e" : "1px solid #1e3a1e", boxShadow: isLatest ? "0 0 40px rgba(34,197,94,0.3)" : "none", marginBottom: 24 }) },
         React.createElement("div", { style: { textAlign: "center", marginBottom: 16 } },
             React.createElement("div", { style: { fontSize: 10, color: "#22c55e", letterSpacing: 4, textTransform: "uppercase", marginBottom: 4 } }, post.title),
             React.createElement("div", { style: { fontSize: 12, color: "#4b5563" } },
                 total,
                 " votes cast")),
-        winner && (React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20, padding: "18px 14px", background: "rgba(22,101,52,0.2)", border: "2px solid #22c55e", borderRadius: 14 } },
+        isTie ? (
+    React.createElement("div", {
+        style: {
+            textAlign: "center",
+            padding: "20px",
+            background: "rgba(234,179,8,0.1)",
+            border: "2px solid #eab308",
+            borderRadius: 14,
+            marginBottom: 20
+        }
+    },
+        React.createElement("div", {
+            style: {
+                fontSize: 18,
+                fontWeight: 800,
+                color: "#facc15"
+            }
+        }, "🤝 TIE"),
+        React.createElement("div", {
+            style: {
+                marginTop: 10,
+                color: "#f0fdf4"
+            }
+        }, tiedCandidates.map(c => `${c.name} (${t[c.id] || 0} votes)`).join(" vs "))
+    )
+) : winner && (React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20, padding: "18px 14px", background: "rgba(22,101,52,0.2)", border: "2px solid #22c55e", borderRadius: 14 } },
             React.createElement("div", { style: { fontSize: 11, color: "#22c55e", fontWeight: 800, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 } }, "\uD83C\uDFC6 WINNER"),
             winner.photo ? React.createElement("img", { src: winner.photo, alt: winner.name, style: { width: 110, height: 132, objectFit: "cover", objectPosition: "top", borderRadius: 10, border: "4px solid #22c55e", marginBottom: 12, boxShadow: "0 0 28px rgba(34,197,94,0.5)" } }) : React.createElement("div", { style: { width: 110, height: 132, borderRadius: 10, background: "#1a2e1a", display: "flex", alignItems: "center", justifyContent: "center", border: "4px solid #22c55e", marginBottom: 12, fontSize: 48 } }, "\uD83D\uDC64"),
             React.createElement("div", { style: { fontSize: 20, fontWeight: 800, color: "#f0fff0", textTransform: "uppercase", textAlign: "center", marginBottom: 10 } }, winner.name),
@@ -599,7 +628,7 @@ function RevealPostCard({ post, tally, isLatest }) {
         React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(130px,1fr))", gap: 10 } }, sorted.map((c, i) => {
             const count = t[c.id] || 0;
             const p = total ? Math.round(count / total * 100) : 0;
-            const lead = i === 0 && count > 0;
+            const lead = !isTie && i === 0 && count > 0;
             return (React.createElement("div", { key: c.id, style: { display: "flex", flexDirection: "column", alignItems: "center", background: lead ? "rgba(22,101,52,0.12)" : "rgba(255,255,255,0.02)", border: `1px solid ${lead ? "rgba(34,197,94,0.25)" : "rgba(255,255,255,0.05)"}`, borderRadius: 10, padding: "10px 6px", textAlign: "center" } },
                 c.photo ? React.createElement("img", { src: c.photo, alt: c.name, style: { width: 64, height: 78, objectFit: "cover", objectPosition: "top", borderRadius: 7, border: `2px solid ${lead ? "#22c55e" : "rgba(255,255,255,0.07)"}`, marginBottom: 6 } }) : React.createElement("div", { style: { width: 64, height: 78, borderRadius: 7, background: "#1a2e1a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, marginBottom: 6 } }, "\uD83D\uDC64"),
                 React.createElement("div", { style: { fontSize: 10, color: lead ? "#f0fff0" : "#9ca3af", fontWeight: 700, lineHeight: 1.3, textTransform: "uppercase" } }, c.name),
