@@ -10,10 +10,9 @@
 <body>
   <div id="loading"><div class="spin"></div><span>Loading LASUASA Election Portal…</span></div>
   <div id="root" style="display:none"></div>
-  <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom-client.production.min.js" crossorigin></script>
-  <script>
-"use strict";
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script>
 "use strict";
 const { useState, useEffect, useRef, useCallback } = React;
 // Phase 2 (Current/New Supabase)
@@ -1498,7 +1497,10 @@ try{
   var el=document.getElementById('root');
   document.getElementById('loading').style.display='none';
   el.style.display='block';
-  ReactDOM.createRoot(el).render(React.createElement(App));
+  ReactDOM.render(
+  React.createElement(App),
+  el
+);
 }catch(e){
   document.getElementById('loading').innerHTML='<div style="color:#f87171;text-align:center;padding:2rem"><div style="font-size:48px;margin-bottom:16px">⚠️</div><div style="font-size:18px">'+e.message+'</div></div>';
   console.error(e);
