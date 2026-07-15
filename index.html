@@ -767,13 +767,30 @@ function FinalResults({ setView }) {
                 const t = tally[post.id] || {};
                 const total = Object.values(t).reduce((a, b) => a + b, 0);
                 const sorted = [...postCands].sort((a, b) => (t[b.id] || 0) - (t[a.id] || 0));
-                const winner = sorted[0];
+
+const highestVotes = sorted.length ? (t[sorted[0].id] || 0) : 0;
+const tiedCandidates = sorted.filter(c => (t[c.id] || 0) === highestVotes && highestVotes > 0);
+const isTie = tiedCandidates.length > 1;
+
+const winner = isTie ? null : sorted[0];
                 return (React.createElement("div", { key: post.id, style: Object.assign(Object.assign({}, CARD), { marginBottom: 24 }) },
                     React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 } },
                         React.createElement("div", { style: { fontWeight: 800, fontSize: 18, color: "#f0fff0" } }, post.title),
                         React.createElement("div", { style: { fontSize: 12, color: "#4b5563" } },
                             total,
                             " votes")),
+                                            isTie && React.createElement("div", {
+    style: {
+        textAlign: "center",
+        padding: "15px",
+        background: "rgba(234,179,8,0.1)",
+        border: "2px solid #eab308",
+        borderRadius: 12,
+        color: "#facc15",
+        fontWeight: 800,
+        marginBottom: 20
+    }
+}, `🤝 TIE — ${tiedCandidates.map(c => c.name).join(" & ")} (${highestVotes} votes each)`),
                     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(160px,1fr))", gap: 16 } }, sorted.map((c, i) => {
                         const count = t[c.id] || 0;
                         const p = total ? Math.round(count / total * 100) : 0;
